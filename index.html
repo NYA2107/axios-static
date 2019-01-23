@@ -22,8 +22,8 @@
 		  <tbody>
 		    <tr v-for="(v,i) in api">
 		      <th scope="row">{{i+1}}</th>
-		      <td>{{v.title}}</td>
-		      <td>{{v.completed}}</td>
+		      <td>{{v.name}}</td>
+		      <td>{{v.age}}</td>
 		    </tr>
 		  </tbody>
 		</table>
@@ -44,7 +44,7 @@
 		  },
 		  methods:{
 			getApi:function(){
-				axios.get('https://jsonplaceholder.typicode.com/todos')
+				axios.get('https://polar-bastion-44628.herokuapp.com/')
 				.then(result =>{
 					this.api = result.data
 					console.log(result.data)
