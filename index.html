@@ -10,23 +10,35 @@
   	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
 </head>
 <body>
-	<div id="app">
-		<table class="table table-striped table-dark">
-		  <thead>
-		    <tr>
-		      <th scope="col">#</th>
-		      <th scope="col">Name</th>
-		      <th scope="col">Age</th>
-		    </tr>
-		  </thead>
-		  <tbody>
-		    <tr v-for="(v,i) in api">
-		      <th scope="row">{{i+1}}</th>
-		      <td>{{v.name}}</td>
-		      <td>{{v.age}}</td>
-		    </tr>
-		  </tbody>
-		</table>
+	<div id="app" style="padding-top:50px;display: flex;justify-content: center;flex-wrap: wrap;">
+		<div style="width: 80%;">
+			<div class="input-group mb-3">
+			  <div class="input-group-prepend">
+			    <span class="input-group-text" id="basic-addon1">nama</span>
+			  </div>
+			  <input v-model="name" type="text" class="form-control" placeholder="Username" aria-label="Username" aria-describedby="basic-addon1">
+			</div>
+			<div class="alert alert-primary" role="alert">
+			  Hasil Fetch : {{msg}}
+			</div>
+			<button style="width: 100%;" type="button" @click="getUser" class="btn btn-outline-primary">GET USER</button>
+			<table v-if="users.length > 0" class="table">
+			  <thead>
+			    <tr>
+			      <th scope="col">#</th>
+			      <th scope="col">Name</th>
+			      <th scope="col">Age</th>
+			    </tr>
+			  </thead>
+			  <tbody>
+			    <tr v-for="(user,i) in users">
+			      <th scope="row">{{i}}</th>
+			      <td>{{user.name}}</td>
+			      <td>{{user.age}}</td>
+			  </tbody>
+			</table>
+		</div>
+		
 	</div>
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
@@ -37,19 +49,47 @@
 		var vm = new Vue({
 		  el:'#app',
 		  data:{
-			api:''
+			key:'',
+			name:'',
+			msg:'Masukkan nama',
+			users:[]
 		  },
 		  created: function(){
-			this.getApi()
 		  },
 		  methods:{
-			getApi:function(){
-				axios.get('https://polar-bastion-44628.herokuapp.com/')
+			getUser:function(){
+				axios.get('http://developer.uns.ac.id/imam/user',{
+		  			params:{
+		  				key : this.key
+		  			}
+		  		})
 				.then(result =>{
-					this.api = result.data
+					
+					if(result.data.isArray){
+						this.users = []	
+					}else{
+						this.users = result.data
+					}
 					console.log(result.data)
 				})
 			}
+		  },
+		  watch:{
+		  	name:function(val){
+		  		axios.get('http://developer.uns.ac.id/imam/',{
+		  			params:{
+		  				name : val
+		  			}
+		  		})
+				.then(result =>{
+					this.key = result.data.key
+					if(result.data.key != 'gagal'){
+						this.msg = 'SUCCES!'
+					}else{
+						this.msg = 'ERROR!'
+					}
+				})
+		  	}
 		  }
 		});
 	</script>
